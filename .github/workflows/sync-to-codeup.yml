@@ -1,0 +1,30 @@
+name: Sync to Aliyun Codeup
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - '**'
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Setup SSH for Codeup
+        uses: webfactory/ssh-agent@v0.8.1
+        with:
+          ssh-private-key: ${{ secrets.CODEUP_SSH_KEY }}
+
+      - name: Push main branch to Codeup
+        run: |
+          git remote add codeup git@codeup.aliyun.com:67f3480bb8d84778e0e7f59f/leyva/openclaw.git
+          git push codeup main --force
+
+      - name: Push tags to Codeup
+        run: |
+          git push codeup --tags --force
